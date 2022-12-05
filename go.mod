@@ -3,6 +3,7 @@ module git.sixfoisneuf.fr/simon/termsonic
 go 1.19
 
 require (
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/delucks/go-subsonic v0.0.0-20220915164742-2744002c4be5 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.4.1-0.20210905002822-f057f0a857a1 // indirect

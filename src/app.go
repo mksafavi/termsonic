@@ -9,12 +9,18 @@ import (
 )
 
 type app struct {
+	// General GUI
 	tv     *tview.Application
 	pages  *tview.Pages
 	header *tview.TextView
 	footer *tview.TextView
 	cfg    *Config
 
+	// Artists panel
+	artistsTree *tview.TreeView
+	songsList   *tview.List
+
+	// Subsonic variables
 	sub *subsonic.Client
 }
 
@@ -42,16 +48,28 @@ func Run(cfg *Config) {
 		})
 	fmt.Fprintf(a.header, `["artists"]F1: Artists[""] | ["playlists"]F2: Playlists[""] | ["config"]F3: Configuration[""]`)
 
+	a.pages.SetBorder(true)
 	a.pages.AddPage("config", configPage(a), true, false)
 	a.pages.AddPage("artists", artistsPage(a), true, false)
 
 	mainLayout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(a.header, 0, 1, false).
+		AddItem(a.header, 1, 1, false).
 		AddItem(a.pages, 0, 3, true).
-		AddItem(a.footer, 0, 1, false)
+		AddItem(a.footer, 1, 1, false)
 
-	switchToPage(a, "config")
+	if testConfig(a.cfg) != nil {
+		switchToPage(a, "config")
+	} else {
+		a.sub, _ = buildSubsonicClient(a.cfg)
+		err := refreshArtists(a)
+		if err != nil {
+			alert(a, "Could not refresh artists: %v", err)
+		} else {
+			switchToPage(a, "artists")
+		}
+	}
+
 	if err := a.tv.SetRoot(mainLayout, true).EnableMouse(true).SetFocus(mainLayout).Run(); err != nil {
 		fmt.Printf("Error running termsonic: %v", err)
 		os.Exit(1)

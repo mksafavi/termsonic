@@ -18,6 +18,7 @@ func artistsPage(a *app) tview.Primitive {
 		SetColumns(40, 0).
 		SetBorders(true)
 
+	// Artist & album list
 	root := tview.NewTreeNode("Subsonic server").SetColor(tcell.ColorYellow)
 	a.artistsTree = tview.NewTreeView().
 		SetRoot(root).
@@ -38,8 +39,26 @@ func artistsPage(a *app) tview.Primitive {
 			a.tv.SetFocus(a.songsList)
 		})
 
+	// Songs list for the selected album
 	a.songsList = tview.NewList()
 	a.songsList.ShowSecondaryText(false)
+
+	// Change the left-right keys to switch between the panels
+	a.artistsTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
+			a.tv.SetFocus(a.songsList)
+			return nil
+		}
+		return event
+	})
+
+	a.songsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
+			a.tv.SetFocus(a.artistsTree)
+			return nil
+		}
+		return event
+	})
 
 	grid.AddItem(a.artistsTree, 0, 0, 1, 1, 0, 0, true)
 	grid.AddItem(a.songsList, 0, 1, 1, 2, 0, 0, false)

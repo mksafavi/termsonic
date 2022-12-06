@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/delucks/go-subsonic"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -38,7 +39,7 @@ func Run(cfg *Config) {
 		SetChangedFunc(func() {
 			a.tv.Draw()
 		}).
-		SetHighlightedFunc(func(added, removed, remaining []string) {
+		SetHighlightedFunc(func(added, _, _ []string) {
 			hl := added[0]
 			cur, _ := a.pages.GetFrontPage()
 
@@ -70,6 +71,28 @@ func Run(cfg *Config) {
 		}
 	}
 
+	// Keyboard shortcuts
+	a.tv.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyF1:
+			switchToPage(a, "artists")
+			return nil
+		case tcell.KeyF2:
+			switchToPage(a, "playlists")
+			return nil
+		case tcell.KeyF3:
+			switchToPage(a, "config")
+			return nil
+		}
+
+		switch event.Rune() {
+		case 'q':
+			a.tv.Stop()
+		}
+
+		return event
+	})
+
 	if err := a.tv.SetRoot(mainLayout, true).EnableMouse(true).SetFocus(mainLayout).Run(); err != nil {
 		fmt.Printf("Error running termsonic: %v", err)
 		os.Exit(1)
@@ -77,13 +100,14 @@ func Run(cfg *Config) {
 }
 
 func switchToPage(a *app, name string) {
-	if name == "artists" {
+	switch name {
+	case "artists":
 		a.pages.SwitchToPage("artists")
 		a.header.Highlight("artists")
-	} else if name == "playlists" {
+	case "playlists":
 		a.pages.SwitchToPage("playlists")
 		a.header.Highlight("playlists")
-	} else if name == "config" {
+	case "config":
 		a.pages.SwitchToPage("config")
 		a.header.Highlight("config")
 	}

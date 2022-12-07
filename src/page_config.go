@@ -8,7 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func configPage(a *app) *tview.Form {
+func (a *app) configPage() *tview.Form {
 	var err error
 
 	form := tview.NewForm().
@@ -17,23 +17,23 @@ func configPage(a *app) *tview.Form {
 		AddPasswordField("Password", a.cfg.Password, 20, '*', func(txt string) { a.cfg.Password = txt }).
 		AddButton("Test", func() {
 			if err = testConfig(a.cfg); err != nil {
-				alert(a, "Could not auth: %v", err)
+				a.alert("Could not auth: %v", err)
 			} else {
-				alert(a, "Success.")
+				a.alert("Success.")
 			}
 		}).
 		AddButton("Save", func() {
 			err := a.cfg.Save()
 			if err != nil {
-				alert(a, "Error saving: %v", err)
+				a.alert("Error saving: %v", err)
 				return
 			}
 
 			a.sub, err = buildSubsonicClient(a.cfg)
 			if err != nil {
-				alert(a, "Could not auth: %v", err)
+				a.alert("Could not auth: %v", err)
 			} else {
-				alert(a, "All good!")
+				a.alert("All good!")
 			}
 		})
 	return form

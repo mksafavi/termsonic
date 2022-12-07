@@ -6,7 +6,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func alert(a *app, format string, params ...interface{}) {
+func (a *app) alert(format string, params ...interface{}) {
 	modal := tview.NewModal().
 		SetText(fmt.Sprintf(format, params...)).
 		AddButtons([]string{"OK"}).

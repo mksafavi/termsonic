@@ -44,14 +44,14 @@ func Run(cfg *Config) {
 			cur, _ := a.pages.GetFrontPage()
 
 			if hl != cur {
-				switchToPage(a, hl)
+				a.switchToPage(hl)
 			}
 		})
 	fmt.Fprintf(a.header, `["artists"]F1: Artists[""] | ["playlists"]F2: Playlists[""] | ["config"]F3: Configuration[""]`)
 
 	a.pages.SetBorder(true)
-	a.pages.AddPage("config", configPage(a), true, false)
-	a.pages.AddPage("artists", artistsPage(a), true, false)
+	a.pages.AddPage("config", a.configPage(), true, false)
+	a.pages.AddPage("artists", a.artistsPage(), true, false)
 
 	mainLayout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -60,14 +60,14 @@ func Run(cfg *Config) {
 		AddItem(a.footer, 1, 1, false)
 
 	if testConfig(a.cfg) != nil {
-		switchToPage(a, "config")
+		a.switchToPage("config")
 	} else {
 		a.sub, _ = buildSubsonicClient(a.cfg)
-		err := refreshArtists(a)
+		err := a.refreshArtists()
 		if err != nil {
-			alert(a, "Could not refresh artists: %v", err)
+			a.alert("Could not refresh artists: %v", err)
 		} else {
-			switchToPage(a, "artists")
+			a.switchToPage("artists")
 		}
 	}
 
@@ -75,13 +75,13 @@ func Run(cfg *Config) {
 	a.tv.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyF1:
-			switchToPage(a, "artists")
+			a.switchToPage("artists")
 			return nil
 		case tcell.KeyF2:
-			switchToPage(a, "playlists")
+			a.switchToPage("playlists")
 			return nil
 		case tcell.KeyF3:
-			switchToPage(a, "config")
+			a.switchToPage("config")
 			return nil
 		}
 
@@ -99,7 +99,7 @@ func Run(cfg *Config) {
 	}
 }
 
-func switchToPage(a *app, name string) {
+func (a *app) switchToPage(name string) {
 	switch name {
 	case "artists":
 		a.pages.SwitchToPage("artists")

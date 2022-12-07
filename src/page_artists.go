@@ -13,7 +13,7 @@ type selection struct {
 	id        string
 }
 
-func artistsPage(a *app) tview.Primitive {
+func (a *app) artistsPage() tview.Primitive {
 	grid := tview.NewGrid().
 		SetColumns(40, 0).
 		SetBorders(true)
@@ -35,7 +35,7 @@ func artistsPage(a *app) tview.Primitive {
 				return
 			}
 
-			loadAlbumInPanel(a, sel.id)
+			a.loadAlbumInPanel(sel.id)
 			a.tv.SetFocus(a.songsList)
 		})
 
@@ -66,7 +66,7 @@ func artistsPage(a *app) tview.Primitive {
 	return grid
 }
 
-func refreshArtists(a *app) error {
+func (a *app) refreshArtists() error {
 	artistsID3, err := a.sub.GetArtists(nil)
 	if err != nil {
 		return err
@@ -104,7 +104,7 @@ func refreshArtists(a *app) error {
 	return nil
 }
 
-func loadAlbumInPanel(a *app, id string) error {
+func (a *app) loadAlbumInPanel(id string) error {
 	album, err := a.sub.GetMusicDirectory(id)
 	if err != nil {
 		return err

@@ -37,6 +37,7 @@ func (a *app) artistsPage() tview.Primitive {
 
 			a.loadAlbumInPanel(sel.id)
 			a.tv.SetFocus(a.songsList)
+			a.updateFooter()
 		})
 
 	// Songs list for the selected album
@@ -47,6 +48,7 @@ func (a *app) artistsPage() tview.Primitive {
 	a.artistsTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.songsList)
+			a.updateFooter()
 			return nil
 		}
 		return event
@@ -55,6 +57,7 @@ func (a *app) artistsPage() tview.Primitive {
 	a.songsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.artistsTree)
+			a.updateFooter()
 			return nil
 		}
 		return event

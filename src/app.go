@@ -32,7 +32,8 @@ func Run(cfg *Config) {
 
 	a.tv = tview.NewApplication()
 	a.pages = tview.NewPages()
-	a.footer = tview.NewTextView()
+	a.footer = tview.NewTextView().
+		SetDynamicColors(true)
 
 	a.header = tview.NewTextView().
 		SetRegions(true).
@@ -104,6 +105,7 @@ func (a *app) switchToPage(name string) {
 	case "artists":
 		a.pages.SwitchToPage("artists")
 		a.header.Highlight("artists")
+		a.tv.SetFocus(a.artistsTree)
 	case "playlists":
 		a.pages.SwitchToPage("playlists")
 		a.header.Highlight("playlists")
@@ -111,4 +113,6 @@ func (a *app) switchToPage(name string) {
 		a.pages.SwitchToPage("config")
 		a.header.Highlight("config")
 	}
+
+	a.updateFooter()
 }

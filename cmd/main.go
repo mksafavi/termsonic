@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"git.sixfoisneuf.fr/simon/termsonic/src"
+	"git.sixfoisneuf.fr/termsonic/src"
 )
 
 var (

@@ -1,14 +1,9 @@
 package src
 
 func (a *app) updateFooter() {
-	switch a.header.GetHighlights()[0] {
+	switch a.headerSections.GetHighlights()[0] {
 	case "artists":
-		switch a.tv.GetFocus() {
-		case a.artistsTree:
-			a.footer.SetText("Artists: [blue]Up/Down:[yellow] Move selection    [blue]Space:[yellow] Select entry")
-		case a.songsList:
-			a.footer.SetText("Songs:   [blue]Up/Down:[yellow] Move selection    [blue]Space:[yellow] Play")
-		}
+		a.footer.SetText("[blue]l:[yellow] Next song    [blue]k:[yellow] Toggle pause")
 	case "playlists":
 		a.footer.SetText("Come back later!")
 	case "config":

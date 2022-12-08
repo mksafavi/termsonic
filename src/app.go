@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"git.sixfoisneuf.fr/termsonic/music"
 	"github.com/delucks/go-subsonic"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -11,23 +12,26 @@ import (
 
 type app struct {
 	// General GUI
-	tv     *tview.Application
-	pages  *tview.Pages
-	header *tview.TextView
-	footer *tview.TextView
-	cfg    *Config
+	tv               *tview.Application
+	pages            *tview.Pages
+	headerSections   *tview.TextView
+	headerNowPlaying *tview.TextView
+	footer           *tview.TextView
+	cfg              *Config
 
 	// Artists panel
 	artistsTree *tview.TreeView
 	songsList   *tview.List
 
 	// Subsonic variables
-	sub *subsonic.Client
+	sub       *subsonic.Client
+	playQueue *music.Queue
 }
 
 func Run(cfg *Config) {
 	a := &app{
-		cfg: cfg,
+		cfg:       cfg,
+		playQueue: music.NewQueue(nil),
 	}
 
 	a.tv = tview.NewApplication()
@@ -35,28 +39,13 @@ func Run(cfg *Config) {
 	a.footer = tview.NewTextView().
 		SetDynamicColors(true)
 
-	a.header = tview.NewTextView().
-		SetRegions(true).
-		SetChangedFunc(func() {
-			a.tv.Draw()
-		}).
-		SetHighlightedFunc(func(added, _, _ []string) {
-			hl := added[0]
-			cur, _ := a.pages.GetFrontPage()
-
-			if hl != cur {
-				a.switchToPage(hl)
-			}
-		})
-	fmt.Fprintf(a.header, `["artists"]F1: Artists[""] | ["playlists"]F2: Playlists[""] | ["config"]F3: Configuration[""]`)
-
 	a.pages.SetBorder(true)
 	a.pages.AddPage("config", a.configPage(), true, false)
 	a.pages.AddPage("artists", a.artistsPage(), true, false)
 
 	mainLayout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(a.header, 1, 1, false).
+		AddItem(a.buildHeader(), 1, 1, false).
 		AddItem(a.pages, 0, 3, true).
 		AddItem(a.footer, 1, 1, false)
 
@@ -64,6 +53,7 @@ func Run(cfg *Config) {
 		a.switchToPage("config")
 	} else {
 		a.sub, _ = buildSubsonicClient(a.cfg)
+		a.playQueue.SetClient(a.sub)
 		err := a.refreshArtists()
 		if err != nil {
 			a.alert("Could not refresh artists: %v", err)
@@ -104,14 +94,17 @@ func (a *app) switchToPage(name string) {
 	switch name {
 	case "artists":
 		a.pages.SwitchToPage("artists")
-		a.header.Highlight("artists")
+		a.headerSections.Highlight("artists")
 		a.tv.SetFocus(a.artistsTree)
+		a.pages.SetBorder(false)
 	case "playlists":
 		a.pages.SwitchToPage("playlists")
-		a.header.Highlight("playlists")
+		a.headerSections.Highlight("playlists")
+		a.pages.SetBorder(true)
 	case "config":
 		a.pages.SwitchToPage("config")
-		a.header.Highlight("config")
+		a.headerSections.Highlight("config")
+		a.pages.SetBorder(true)
 	}
 
 	a.updateFooter()

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/delucks/go-subsonic"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -14,9 +15,7 @@ type selection struct {
 }
 
 func (a *app) artistsPage() tview.Primitive {
-	grid := tview.NewGrid().
-		SetColumns(40, 0).
-		SetBorders(true)
+	grid := tview.NewFlex().SetDirection(tview.FlexColumn)
 
 	// Artist & album list
 	root := tview.NewTreeNode("Subsonic server").SetColor(tcell.ColorYellow)
@@ -37,18 +36,18 @@ func (a *app) artistsPage() tview.Primitive {
 
 			a.loadAlbumInPanel(sel.id)
 			a.tv.SetFocus(a.songsList)
-			a.updateFooter()
 		})
+	a.artistsTree.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
 
 	// Songs list for the selected album
 	a.songsList = tview.NewList()
 	a.songsList.ShowSecondaryText(false)
+	a.songsList.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
 
 	// Change the left-right keys to switch between the panels
 	a.artistsTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.songsList)
-			a.updateFooter()
 			return nil
 		}
 		return event
@@ -57,14 +56,26 @@ func (a *app) artistsPage() tview.Primitive {
 	a.songsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.artistsTree)
-			a.updateFooter()
 			return nil
 		}
 		return event
 	})
 
-	grid.AddItem(a.artistsTree, 0, 0, 1, 1, 0, 0, true)
-	grid.AddItem(a.songsList, 0, 1, 1, 2, 0, 0, false)
+	grid.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Rune() == 'l' {
+			a.playQueue.Next()
+			return nil
+		}
+
+		if event.Rune() == 'k' {
+			a.playQueue.TogglePause()
+			return nil
+		}
+		return event
+	})
+
+	grid.AddItem(a.artistsTree, 0, 1, true)
+	grid.AddItem(a.songsList, 0, 1, false)
 
 	return grid
 }
@@ -113,12 +124,32 @@ func (a *app) loadAlbumInPanel(id string) error {
 		return err
 	}
 
-	a.songsList.SetTitle(album.Name)
+	var songs []*subsonic.Child
+
 	a.songsList.Clear()
-	for _, song := range album.Child {
+	for i := len(album.Child) - 1; i >= 0; i-- {
+		song := album.Child[i]
+		songNoPtr := *song
+		songs = append([]*subsonic.Child{&songNoPtr}, songs...)
+
+		songsCopy := make([]*subsonic.Child, len(songs))
+		copy(songsCopy, songs)
+
 		dur := time.Duration(song.Duration) * time.Second
-		a.songsList.AddItem(fmt.Sprintf("%-10s %d - %s", fmt.Sprintf("[%s]", dur.String()), song.Track, song.Title), "", 0, nil)
+
+		a.songsList.InsertItem(0, fmt.Sprintf("%-10s %d - %s", fmt.Sprintf("[%s]", dur.String()), song.Track, song.Title), "", 0, func() {
+			a.playQueue.Clear()
+			for _, s := range songsCopy {
+				a.playQueue.Append(s)
+			}
+			err := a.playQueue.Play()
+			if err != nil {
+				a.alert("Error: %v", err)
+			}
+		})
 	}
+
+	a.songsList.SetCurrentItem(0)
 
 	return nil
 }

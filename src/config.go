@@ -10,6 +10,8 @@ import (
 )
 
 type Config struct {
+	path string
+
 	BaseURL  string
 	Username string
 	Password string
@@ -18,6 +20,8 @@ type Config struct {
 func LoadConfigFromFile(filename string) (*Config, error) {
 	var cfg Config
 	_, err := toml.DecodeFile(filename, &cfg)
+
+	cfg.path = filename
 
 	return &cfg, err
 }
@@ -32,7 +36,7 @@ func LoadDefaultConfig() (*Config, error) {
 	if err != nil && !os.IsNotExist(err) {
 		return nil, err
 	} else if os.IsNotExist(err) {
-		return &Config{}, nil
+		return &Config{path: path}, nil
 	}
 	f.Close()
 
@@ -74,12 +78,7 @@ func getConfigFilePath() (string, error) {
 }
 
 func (c *Config) Save() error {
-	path, err := getConfigFilePath()
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Create(path)
+	f, err := os.Create(c.path)
 	if err != nil {
 		return err
 	}

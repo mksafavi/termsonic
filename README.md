@@ -11,10 +11,12 @@ $ git clone https://git.sixfoisneuf.fr/termsonic && cd termsonic
 $ go build -o termsonic ./cmd
 ```
 
+Please note that Linux builds additionally need a working C compiler in their PATH. This is due to [faiface/beep](https://github.com/faiface/beep), used for audio playback.
+
 ## Configuration
 
 The application reads its configuration from `$XDG_CONFIG_DIR/termsonic.toml`, or `~/.config/termsonic.toml` if `XDG_CONFIG_DIR` doesn't exist.
 
 On Windows, it reads its configuration from `%APPDATA%\\Termsonic\\termsonic.toml`.
 
-You can edit the configuration from inside the app, or by passing parameters on the command line (see `--help`).
+You can edit the configuration from inside the app, or by hand using a text editor. See [the example configuration file](config.toml.example), and [the TOML reference](https://toml.io/en/). It is possible to specify another configuration file with the `-config` command-line argument.

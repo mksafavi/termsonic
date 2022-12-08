@@ -153,6 +153,8 @@ func (p *Queue) setupSpeaker(s beep.Streamer, format beep.Format) (beep.Streamer
 
 		return s, nil
 	} else {
-		return beep.Resample(4, format.SampleRate, p.oldSampleRate, s), nil
+		sr := p.oldSampleRate
+		p.oldSampleRate = format.SampleRate
+		return beep.Resample(4, format.SampleRate, sr, s), nil
 	}
 }

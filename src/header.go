@@ -41,6 +41,9 @@ func (a *app) buildHeader() tview.Primitive {
 		} else {
 			a.headerNowPlaying.SetText("Not playing")
 		}
+
+		// Fix "Now Playing" not always updating
+		go a.tv.Draw()
 	})
 
 	return flex

@@ -2,6 +2,10 @@
 
 This project implements a terminal-based client for any [Subsonic](https://www.subsonic.org)-compatible server.
 
+It currently supports the following:
+- Browsing of Subsonic library organised by Artists and Albums
+- Playback of OGG, FLAC and MP3 files
+
 ## Building
 
 This application requires [Go](https://go.dev) version 1.19 at minimum.
@@ -11,7 +15,10 @@ $ git clone https://git.sixfoisneuf.fr/termsonic && cd termsonic
 $ go build -o termsonic ./cmd
 ```
 
+### Linux notes
 Please note that Linux builds additionally need a working C compiler in their PATH. This is due to [faiface/beep](https://github.com/faiface/beep), used for audio playback.
+
+You will also need the ALSA development libraries for your system. On Debian, this is `libasound2-dev`.
 
 ## Configuration
 

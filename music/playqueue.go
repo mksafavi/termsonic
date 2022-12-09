@@ -81,9 +81,7 @@ func (q *Queue) PlaySong(s *subsonic.Child) error {
 	speaker.Clear()
 	speaker.Play(beep.Seq(streamer, beep.Callback(func() { go q.Next() })))
 
-	if q.onChange != nil {
-		q.onChange(s, false)
-	}
+	q.triggerChange()
 
 	return nil
 }
@@ -135,11 +133,7 @@ func (q *Queue) TogglePause() {
 
 	q.isPaused = !q.isPaused
 
-	if q.onChange != nil {
-		if len(q.songs) > 0 {
-			q.onChange(q.songs[0], q.isPaused)
-		}
-	}
+	q.triggerChange()
 }
 
 func (q *Queue) SkipTo(s *subsonic.Child) {
@@ -157,6 +151,55 @@ func (q *Queue) SkipTo(s *subsonic.Child) {
 
 	q.songs = q.songs[i:]
 	q.Play()
+}
+
+func (q *Queue) RemoveSong(i int) error {
+	if i >= len(q.songs) {
+		return fmt.Errorf("index out of bounds")
+	}
+
+	q.songs = append(q.songs[:i], q.songs[i+1:]...)
+	if i == 0 {
+		// We removed the first song: this stops it and prepares for the next
+		q.Stop()
+		if !q.isPaused {
+			q.Play()
+		}
+	}
+	q.triggerChange()
+
+	return nil
+}
+
+func (q *Queue) Switch(a, b int) error {
+	if a >= len(q.songs) {
+		return fmt.Errorf("%d is out of bounds", a)
+	}
+
+	if b >= len(q.songs) {
+		return fmt.Errorf("%d is out of bounds", b)
+	}
+
+	tmp := q.songs[a]
+	q.songs[a] = q.songs[b]
+	q.songs[b] = tmp
+
+	if (a == 0 || b == 0) && !q.isPaused {
+		// If we're switching the first song, and it's currently playing, start Play() again
+		q.Play()
+	}
+
+	q.triggerChange()
+
+	return nil
+}
+
+func (q *Queue) triggerChange() {
+	if q.onChange != nil {
+		if len(q.songs) > 0 {
+			q.onChange(q.songs[0], q.isPaused)
+		}
+	}
 }
 
 func (p *Queue) setupSpeaker(s beep.Streamer, format beep.Format) (beep.Streamer, error) {

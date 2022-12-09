@@ -19,9 +19,12 @@ type app struct {
 	footer           *tview.TextView
 	cfg              *Config
 
-	// Artists panel
+	// Artists page
 	artistsTree *tview.TreeView
 	songsList   *tview.List
+
+	// Play queue page
+	playQueueList *tview.List
 
 	// Subsonic variables
 	sub       *subsonic.Client
@@ -42,6 +45,7 @@ func Run(cfg *Config) {
 	a.pages.SetBorder(true)
 	a.pages.AddPage("config", a.configPage(), true, false)
 	a.pages.AddPage("artists", a.artistsPage(), true, false)
+	a.pages.AddPage("playqueue", a.queuePage(), true, false)
 
 	mainLayout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -69,9 +73,12 @@ func Run(cfg *Config) {
 			a.switchToPage("artists")
 			return nil
 		case tcell.KeyF2:
-			a.switchToPage("playlists")
+			a.switchToPage("playqueue")
 			return nil
 		case tcell.KeyF3:
+			a.switchToPage("playlists")
+			return nil
+		case tcell.KeyF4:
 			a.switchToPage("config")
 			return nil
 		}
@@ -97,6 +104,11 @@ func (a *app) switchToPage(name string) {
 		a.headerSections.Highlight("artists")
 		a.tv.SetFocus(a.artistsTree)
 		a.pages.SetBorder(false)
+	case "playqueue":
+		a.pages.SwitchToPage("playqueue")
+		a.headerSections.Highlight("playqueue")
+		a.tv.SetFocus(a.playQueueList)
+		a.pages.SetBorder(true)
 	case "playlists":
 		a.pages.SwitchToPage("playlists")
 		a.headerSections.Highlight("playlists")

@@ -61,18 +61,7 @@ func (a *app) artistsPage() tview.Primitive {
 		return event
 	})
 
-	grid.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Rune() == 'l' {
-			a.playQueue.Next()
-			return nil
-		}
-
-		if event.Rune() == 'k' {
-			a.playQueue.TogglePause()
-			return nil
-		}
-		return event
-	})
+	a.setupMusicControlKeys(grid.Box)
 
 	grid.AddItem(a.artistsTree, 0, 1, true)
 	grid.AddItem(a.songsList, 0, 1, false)

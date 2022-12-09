@@ -24,7 +24,7 @@ func (a *app) buildHeader() tview.Primitive {
 				a.switchToPage(hl)
 			}
 		})
-	fmt.Fprintf(a.headerSections, `["artists"]F1: Artists[""] | ["playlists"]F2: Playlists[""] | ["config"]F3: Configuration[""]`)
+	fmt.Fprintf(a.headerSections, `["artists"]F1: Artists[""] | ["playqueue"]F2: Queue[""] | ["playlists"]F3: Playlists[""] | ["config"]F4: Configuration[""]`)
 
 	a.headerNowPlaying = tview.NewTextView().SetTextAlign(tview.AlignRight)
 
@@ -41,6 +41,8 @@ func (a *app) buildHeader() tview.Primitive {
 		} else {
 			a.headerNowPlaying.SetText("Not playing")
 		}
+
+		a.updatePageQueue()
 
 		// Fix "Now Playing" not always updating
 		go a.tv.Draw()

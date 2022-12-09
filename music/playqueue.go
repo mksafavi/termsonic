@@ -142,6 +142,23 @@ func (q *Queue) TogglePause() {
 	}
 }
 
+func (q *Queue) SkipTo(s *subsonic.Child) {
+	i := -1
+	for n, s2 := range q.GetSongs() {
+		if s.ID == s2.ID {
+			i = n
+			break
+		}
+	}
+
+	if i == -1 {
+		return
+	}
+
+	q.songs = q.songs[i:]
+	q.Play()
+}
+
 func (p *Queue) setupSpeaker(s beep.Streamer, format beep.Format) (beep.Streamer, error) {
 	if !p.speakerInitialized {
 		err := speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))

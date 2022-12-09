@@ -2,7 +2,6 @@ package src
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/delucks/go-subsonic"
 	"github.com/gdamore/tcell/v2"
@@ -41,7 +40,7 @@ func (a *app) artistsPage() tview.Primitive {
 
 	// Songs list for the selected album
 	a.songsList = tview.NewList()
-	a.songsList.ShowSecondaryText(false)
+	a.songsList.ShowSecondaryText(false).SetHighlightFullLine(true)
 	a.songsList.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
 
 	// Change the left-right keys to switch between the panels
@@ -124,9 +123,9 @@ func (a *app) loadAlbumInPanel(id string) error {
 		songsCopy := make([]*subsonic.Child, len(songs))
 		copy(songsCopy, songs)
 
-		dur := time.Duration(song.Duration) * time.Second
+		txt := fmt.Sprintf("%-2d - %s", song.Track, song.Title)
 
-		a.songsList.InsertItem(0, fmt.Sprintf("%-10s %d - %s", fmt.Sprintf("[%s]", dur.String()), song.Track, song.Title), "", 0, func() {
+		a.songsList.InsertItem(0, txt, "", 0, func() {
 			a.playQueue.Clear()
 			for _, s := range songsCopy {
 				a.playQueue.Append(s)

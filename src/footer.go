@@ -7,8 +7,8 @@ func (a *app) updateFooter() {
 	case "playqueue":
 		a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]d:[yellow] Remove   [blue]j:[yellow] Move up   [blue]k:[yellow] Move down")
 	case "playlists":
-		a.footer.SetText("Come back later!")
+		a.footer.SetText("")
 	case "config":
-		a.footer.SetText("Configuration page")
+		a.footer.SetText("")
 	}
 }

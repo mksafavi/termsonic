@@ -2,7 +2,9 @@ package src
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"git.sixfoisneuf.fr/termsonic/music"
 	"github.com/delucks/go-subsonic"
@@ -157,4 +159,14 @@ func (a *app) switchToPage(name string) {
 	}
 
 	a.updateFooter()
+}
+
+func randomize(t []*subsonic.Child) []*subsonic.Child {
+	t2 := make([]*subsonic.Child, len(t))
+	copy(t2, t)
+
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(t2), func(i, j int) { t2[i], t2[j] = t2[j], t2[i] })
+
+	return t2
 }

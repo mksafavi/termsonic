@@ -57,6 +57,10 @@ func (q *Queue) Clear() {
 }
 
 func (q *Queue) PlaySong(s *subsonic.Child) error {
+	if q.isPaused {
+		q.TogglePause()
+	}
+
 	rc, err := Download2(q.sub, s.ID)
 	if err != nil {
 		return err
@@ -125,6 +129,9 @@ func (q *Queue) Next() error {
 }
 
 func (q *Queue) Stop() {
+	if q.isPaused {
+		q.TogglePause()
+	}
 	speaker.Clear()
 }
 

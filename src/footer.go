@@ -9,10 +9,10 @@ func (a *app) updateFooter() {
 			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play song last   [blue]n:[yellow] Play song next")
 		}
 	case "playqueue":
-		a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]d:[yellow] Remove   [blue]j:[yellow] Move up   [blue]k:[yellow] Move down")
+		a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]d:[yellow] Remove   [blue]j:[yellow] Move up   [blue]k:[yellow] Move down  [blue]r:[yellow] Shuffle")
 	case "playlists":
 		if a.tv.GetFocus() == a.playlistsList {
-			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play playlist last   [blue]n:[yellow] Play playlist next")
+			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play playlist last   [blue]n:[yellow] Play playlist next   [blue]r:[yellow] Random")
 		} else if a.tv.GetFocus() == a.playlistSongs {
 			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play song last   [blue]n:[yellow] Play song next")
 		}

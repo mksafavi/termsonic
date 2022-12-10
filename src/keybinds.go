@@ -51,6 +51,16 @@ func (a *app) setupMusicControlKeys(p *tview.Box) {
 				a.playQueueList.SetCurrentItem(sel - 1)
 
 				return nil
+			} else if event.Rune() == 'r' {
+				a.playQueue.Stop()
+				songs := a.playQueue.GetSongs()
+				a.playQueue.Clear()
+				for _, s := range randomize(songs) {
+					a.playQueue.Append(s)
+				}
+
+				a.playQueue.Play()
+				a.updatePageQueue()
 			}
 		}
 
@@ -145,6 +155,21 @@ func (a *app) setupMusicControlKeys(p *tview.Box) {
 				for i := len(pl.Entry) - 1; i >= 0; i-- {
 					a.playQueue.Insert(1, pl.Entry[i])
 				}
+
+				a.updatePageQueue()
+			} else if event.Rune() == 'r' {
+				sel := a.playlistsList.GetCurrentItem()
+				pl, err := a.sub.GetPlaylist(a.allPlaylists[sel].ID)
+				if err != nil {
+					a.alert("Error: %v", err)
+					return nil
+				}
+
+				a.playQueue.Clear()
+				for _, s := range randomize(pl.Entry) {
+					a.playQueue.Append(s)
+				}
+				a.playQueue.Play()
 
 				a.updatePageQueue()
 			}

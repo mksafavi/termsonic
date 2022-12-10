@@ -6,6 +6,7 @@ It currently supports the following:
 
 - Browsing of Subsonic library organised by Artists and Albums
 - Playback of OGG, FLAC and MP3 files
+- Playlist support
 - Play queue management
 
 ## Building

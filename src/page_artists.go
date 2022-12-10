@@ -3,7 +3,6 @@ package src
 import (
 	"fmt"
 
-	"github.com/delucks/go-subsonic"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -115,10 +114,8 @@ func (a *app) loadAlbumInPanel(id string) error {
 	}
 
 	a.songsList.Clear()
-	a.currentSongs = make([]*subsonic.Child, 0)
+	a.currentSongs = album.Child
 	for _, song := range album.Child {
-		a.currentSongs = append(a.currentSongs, song)
-
 		txt := fmt.Sprintf("%-2d - %s", song.Track, song.Title)
 
 		a.songsList.AddItem(txt, "", 0, func() {

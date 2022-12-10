@@ -11,8 +11,12 @@ func (a *app) updateFooter() {
 	case "playqueue":
 		a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]d:[yellow] Remove   [blue]j:[yellow] Move up   [blue]k:[yellow] Move down")
 	case "playlists":
-		a.footer.SetText("")
+		if a.tv.GetFocus() == a.playlistsList {
+			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play playlist last   [blue]n:[yellow] Play playlist next")
+		} else if a.tv.GetFocus() == a.playlistSongs {
+			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play song last   [blue]n:[yellow] Play song next")
+		}
 	case "config":
-		a.footer.SetText("")
+		a.footer.SetText("[yellow]No shortcuts here")
 	}
 }

@@ -120,6 +120,50 @@ func (a *app) setupMusicControlKeys(p *tview.Box) {
 			}
 		}
 
+		if a.tv.GetFocus() == a.playlistsList {
+			if event.Rune() == 'e' {
+				sel := a.playlistsList.GetCurrentItem()
+				pl, err := a.sub.GetPlaylist(a.allPlaylists[sel].ID)
+				if err != nil {
+					a.alert("Error: %v", err)
+					return nil
+				}
+
+				for _, s := range pl.Entry {
+					a.playQueue.Append(s)
+				}
+
+				a.updatePageQueue()
+			} else if event.Rune() == 'n' {
+				sel := a.playlistsList.GetCurrentItem()
+				pl, err := a.sub.GetPlaylist(a.allPlaylists[sel].ID)
+				if err != nil {
+					a.alert("Error: %v", err)
+					return nil
+				}
+
+				for i := len(pl.Entry) - 1; i >= 0; i-- {
+					a.playQueue.Insert(1, pl.Entry[i])
+				}
+
+				a.updatePageQueue()
+			}
+		}
+
+		if a.tv.GetFocus() == a.playlistSongs {
+			if event.Rune() == 'e' {
+				sel := a.playlistSongs.GetCurrentItem()
+				a.playQueue.Append(a.currentPlaylist.Entry[sel])
+
+				a.updatePageQueue()
+			} else if event.Rune() == 'n' {
+				sel := a.playlistSongs.GetCurrentItem()
+				a.playQueue.Insert(1, a.currentPlaylist.Entry[sel])
+
+				a.updatePageQueue()
+			}
+		}
+
 		return event
 	})
 }

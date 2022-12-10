@@ -20,12 +20,20 @@ type app struct {
 	cfg              *Config
 
 	// Artists page
-	artistsTree  *tview.TreeView
-	songsList    *tview.List
-	currentSongs []*subsonic.Child
+	artistsLoaded bool
+	artistsTree   *tview.TreeView
+	songsList     *tview.List
+	currentSongs  []*subsonic.Child
 
 	// Play queue page
 	playQueueList *tview.List
+
+	// Playlist page
+	playlistsLoaded bool
+	playlistsList   *tview.List
+	playlistSongs   *tview.List
+	allPlaylists    []*subsonic.Playlist
+	currentPlaylist *subsonic.Playlist
 
 	// Subsonic variables
 	sub       *subsonic.Client
@@ -47,6 +55,7 @@ func Run(cfg *Config) {
 	a.pages.AddPage("config", a.configPage(), true, false)
 	a.pages.AddPage("artists", a.artistsPage(), true, false)
 	a.pages.AddPage("playqueue", a.queuePage(), true, false)
+	a.pages.AddPage("playlists", a.playlistsPage(), true, false)
 
 	mainLayout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -59,12 +68,26 @@ func Run(cfg *Config) {
 	} else {
 		a.sub, _ = buildSubsonicClient(a.cfg)
 		a.playQueue.SetClient(a.sub)
-		err := a.refreshArtists()
-		if err != nil {
-			a.alert("Could not refresh artists: %v", err)
+
+		fmt.Printf("Loading artists...")
+		if err := a.refreshArtists(); err != nil {
+			fmt.Println("ERR")
+			a.alert("Loading artists: %v", err)
 		} else {
-			a.switchToPage("artists")
+			fmt.Println("OK")
+			a.artistsLoaded = true
 		}
+
+		fmt.Printf("Loading playlists...")
+		if err := a.refreshPlaylists(); err != nil {
+			fmt.Println("ERR")
+			a.alert("Loading playlists: %v", err)
+		} else {
+			fmt.Println("OK")
+			a.playlistsLoaded = true
+		}
+
+		a.switchToPage("artists")
 	}
 
 	// Keyboard shortcuts
@@ -101,6 +124,12 @@ func Run(cfg *Config) {
 func (a *app) switchToPage(name string) {
 	switch name {
 	case "artists":
+		if !a.artistsLoaded {
+			if err := a.refreshArtists(); err != nil {
+				a.alert("Error: %v", err)
+			}
+			a.artistsLoaded = true
+		}
 		a.pages.SwitchToPage("artists")
 		a.headerSections.Highlight("artists")
 		a.tv.SetFocus(a.artistsTree)
@@ -111,9 +140,16 @@ func (a *app) switchToPage(name string) {
 		a.tv.SetFocus(a.playQueueList)
 		a.pages.SetBorder(true)
 	case "playlists":
+		if !a.playlistsLoaded {
+			if err := a.refreshPlaylists(); err != nil {
+				a.alert("Error: %v", err)
+			}
+			a.playlistsLoaded = true
+		}
 		a.pages.SwitchToPage("playlists")
 		a.headerSections.Highlight("playlists")
-		a.pages.SetBorder(true)
+		a.tv.SetFocus(a.playlistsList)
+		a.pages.SetBorder(false)
 	case "config":
 		a.pages.SwitchToPage("config")
 		a.headerSections.Highlight("config")

@@ -3,8 +3,10 @@
 This project implements a terminal-based client for any [Subsonic](https://www.subsonic.org)-compatible server.
 
 It currently supports the following:
+
 - Browsing of Subsonic library organised by Artists and Albums
 - Playback of OGG, FLAC and MP3 files
+- Play queue management
 
 ## Building
 

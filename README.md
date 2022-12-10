@@ -1,4 +1,4 @@
-# termsonic - a TUI Subsonic client
+# termsonic - a TUI Subsonic client [(latest release)](https://git.sixfoisneuf.fr/releases/termsonic/latest/)
 
 This project implements a terminal-based client for any [Subsonic](https://www.subsonic.org)-compatible server.
 

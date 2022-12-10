@@ -54,6 +54,72 @@ func (a *app) setupMusicControlKeys(p *tview.Box) {
 			}
 		}
 
+		if a.tv.GetFocus() == a.songsList {
+			if event.Rune() == 'e' {
+				// Add to end
+				sel := a.songsList.GetCurrentItem()
+				a.playQueue.Append(a.currentSongs[sel])
+
+				a.updatePageQueue()
+			} else if event.Rune() == 'n' {
+				// Add next
+				sel := a.songsList.GetCurrentItem()
+				a.playQueue.Insert(1, a.currentSongs[sel])
+
+				a.updatePageQueue()
+			}
+		} else if a.tv.GetFocus() == a.artistsTree {
+			if event.Rune() == 'e' {
+				// Add to end
+				sel := a.artistsTree.GetCurrentNode()
+				ref := sel.GetReference()
+				if ref == nil {
+					return nil
+				}
+
+				if ref.(selection).entryType != "album" {
+					return nil
+				}
+
+				id := ref.(selection).id
+				album, err := a.sub.GetMusicDirectory(id)
+				if err != nil {
+					a.alert("Error: %v", err)
+					return nil
+				}
+
+				for _, s := range album.Child {
+					a.playQueue.Append(s)
+				}
+
+				a.updatePageQueue()
+			} else if event.Rune() == 'n' {
+				// Add next
+				sel := a.artistsTree.GetCurrentNode()
+				ref := sel.GetReference()
+				if ref == nil {
+					return nil
+				}
+
+				if ref.(selection).entryType != "album" {
+					return nil
+				}
+
+				id := ref.(selection).id
+				album, err := a.sub.GetMusicDirectory(id)
+				if err != nil {
+					a.alert("Error: %v", err)
+					return nil
+				}
+
+				for i := len(album.Child) - 1; i >= 0; i-- {
+					a.playQueue.Insert(1, album.Child[i])
+				}
+
+				a.updatePageQueue()
+			}
+		}
+
 		return event
 	})
 }

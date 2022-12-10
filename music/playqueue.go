@@ -43,9 +43,17 @@ func (q *Queue) Append(s *subsonic.Child) {
 	q.songs = append(q.songs, s)
 }
 
+func (q *Queue) Insert(i int, s *subsonic.Child) {
+	q.songs = append(q.songs[:i], append([]*subsonic.Child{s}, q.songs[i:]...)...)
+}
+
 func (q *Queue) Clear() {
 	q.songs = make([]*subsonic.Child, 0)
-	speaker.Clear()
+	if q.isPaused {
+		q.TogglePause()
+	}
+	q.Stop()
+	q.triggerChange()
 }
 
 func (q *Queue) PlaySong(s *subsonic.Child) error {

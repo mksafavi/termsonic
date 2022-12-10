@@ -47,6 +47,7 @@ func (a *app) artistsPage() tview.Primitive {
 	a.artistsTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.songsList)
+			a.updateFooter()
 			return nil
 		}
 		return event
@@ -55,6 +56,7 @@ func (a *app) artistsPage() tview.Primitive {
 	a.songsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.artistsTree)
+			a.updateFooter()
 			return nil
 		}
 		return event
@@ -112,22 +114,17 @@ func (a *app) loadAlbumInPanel(id string) error {
 		return err
 	}
 
-	var songs []*subsonic.Child
-
 	a.songsList.Clear()
-	for i := len(album.Child) - 1; i >= 0; i-- {
-		song := album.Child[i]
-		songNoPtr := *song
-		songs = append([]*subsonic.Child{&songNoPtr}, songs...)
-
-		songsCopy := make([]*subsonic.Child, len(songs))
-		copy(songsCopy, songs)
+	a.currentSongs = make([]*subsonic.Child, 0)
+	for _, song := range album.Child {
+		a.currentSongs = append(a.currentSongs, song)
 
 		txt := fmt.Sprintf("%-2d - %s", song.Track, song.Title)
 
-		a.songsList.InsertItem(0, txt, "", 0, func() {
+		a.songsList.AddItem(txt, "", 0, func() {
+			sel := a.songsList.GetCurrentItem()
 			a.playQueue.Clear()
-			for _, s := range songsCopy {
+			for _, s := range a.currentSongs[sel:] {
 				a.playQueue.Append(s)
 			}
 			err := a.playQueue.Play()

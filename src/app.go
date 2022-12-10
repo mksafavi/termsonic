@@ -20,8 +20,9 @@ type app struct {
 	cfg              *Config
 
 	// Artists page
-	artistsTree *tview.TreeView
-	songsList   *tview.List
+	artistsTree  *tview.TreeView
+	songsList    *tview.List
+	currentSongs []*subsonic.Child
 
 	// Play queue page
 	playQueueList *tview.List

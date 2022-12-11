@@ -34,6 +34,7 @@ func (a *app) artistsPage() tview.Primitive {
 
 			a.loadAlbumInPanel(sel.id)
 			a.tv.SetFocus(a.songsList)
+			a.updateFooter()
 		})
 	a.artistsTree.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
 

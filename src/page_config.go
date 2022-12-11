@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/delucks/go-subsonic"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -36,6 +37,25 @@ func (a *app) configPage() *tview.Form {
 				a.alert("All good!")
 			}
 		})
+
+	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Rune() == 'R' {
+			if err := a.refreshArtists(); err != nil {
+				a.alert("Error: %v", err)
+				return nil
+			}
+
+			if err := a.refreshPlaylists(); err != nil {
+				a.alert("Error: %v", err)
+				return nil
+			}
+
+			a.alert("Refreshed successfully")
+		}
+
+		return nil
+	})
+
 	return form
 }
 

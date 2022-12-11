@@ -5,9 +5,9 @@ import (
 	"github.com/rivo/tview"
 )
 
-func (a *app) setupMusicControlKeys(p *tview.Box) {
-	// Add 'k' and 'l' key bindings
+func (a *app) setupKeybindings(p *tview.Box) {
 	p.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		// Next & pause
 		if event.Rune() == 'l' {
 			a.playQueue.Next()
 			return nil

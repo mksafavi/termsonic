@@ -40,7 +40,7 @@ func (a *app) playlistsPage() tview.Primitive {
 	})
 
 	// Setup e & n keybinds
-	a.setupMusicControlKeys(flex.Box)
+	a.setupKeybindings(flex.Box)
 
 	flex.AddItem(a.playlistsList, 0, 1, false)
 	flex.AddItem(a.playlistSongs, 0, 1, false)

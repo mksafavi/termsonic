@@ -11,7 +11,7 @@ func (a *app) queuePage() tview.Primitive {
 		ShowSecondaryText(false).
 		SetHighlightFullLine(true)
 
-	a.setupMusicControlKeys(a.playQueueList.Box)
+	a.setupKeybindings(a.playQueueList.Box)
 
 	a.updatePageQueue()
 

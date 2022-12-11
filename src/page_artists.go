@@ -62,7 +62,7 @@ func (a *app) artistsPage() tview.Primitive {
 		return event
 	})
 
-	a.setupMusicControlKeys(grid.Box)
+	a.setupKeybindings(grid.Box)
 
 	grid.AddItem(a.artistsTree, 0, 1, true)
 	grid.AddItem(a.songsList, 0, 1, false)

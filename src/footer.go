@@ -17,6 +17,6 @@ func (a *app) updateFooter() {
 			a.footer.SetText("[blue]l:[yellow] Next song   [blue]p:[yellow] Toggle pause   [blue]e:[yellow] Play song last   [blue]n:[yellow] Play song next")
 		}
 	case "config":
-		a.footer.SetText("[yellow]No shortcuts here")
+		a.footer.SetText("[blue]R:[yellow] Refresh")
 	}
 }

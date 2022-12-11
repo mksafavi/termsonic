@@ -9,6 +9,8 @@ It currently supports the following:
 - Playlist support
 - Play queue management
 
+![screenshot](.screenshots/mainscreen.png)
+
 ## Building
 
 This application requires [Go](https://go.dev) version 1.19 at minimum.

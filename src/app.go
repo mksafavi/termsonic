@@ -126,6 +126,9 @@ func Run(cfg *Config) {
 func (a *app) switchToPage(name string) {
 	switch name {
 	case "artists":
+		if a.sub == nil {
+			return
+		}
 		if !a.artistsLoaded {
 			if err := a.refreshArtists(); err != nil {
 				a.alert("Error: %v", err)
@@ -137,11 +140,17 @@ func (a *app) switchToPage(name string) {
 		a.tv.SetFocus(a.artistsTree)
 		a.pages.SetBorder(false)
 	case "playqueue":
+		if a.sub == nil {
+			return
+		}
 		a.pages.SwitchToPage("playqueue")
 		a.headerSections.Highlight("playqueue")
 		a.tv.SetFocus(a.playQueueList)
 		a.pages.SetBorder(true)
 	case "playlists":
+		if a.sub == nil {
+			return
+		}
 		if !a.playlistsLoaded {
 			if err := a.refreshPlaylists(); err != nil {
 				a.alert("Error: %v", err)

@@ -39,7 +39,7 @@ func (a *app) configPage() *tview.Form {
 		})
 
 	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Rune() == 'R' {
+		if event.Key() == tcell.KeyCtrlR {
 			if err := a.refreshArtists(); err != nil {
 				a.alert("Error: %v", err)
 				return nil
@@ -51,9 +51,11 @@ func (a *app) configPage() *tview.Form {
 			}
 
 			a.alert("Refreshed successfully")
+
+			return nil
 		}
 
-		return nil
+		return event
 	})
 
 	return form

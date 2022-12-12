@@ -7,13 +7,14 @@ import (
 
 func (a *app) setupKeybindings(p *tview.Box) {
 	p.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		// Next & pause
-		if event.Rune() == 'l' {
+		switch event.Rune() {
+		case 'q':
+			a.tv.Stop()
+			return nil
+		case 'l':
 			a.playQueue.Next()
 			return nil
-		}
-
-		if event.Rune() == 'p' {
+		case 'p':
 			a.playQueue.TogglePause()
 			return nil
 		}

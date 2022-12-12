@@ -34,12 +34,17 @@ func (a *app) configPage() *tview.Form {
 			if err != nil {
 				a.alert("Could not auth: %v", err)
 			} else {
+				a.playQueue.SetClient(a.sub)
 				a.alert("All good!")
 			}
 		})
 
 	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyCtrlR {
+			if a.sub == nil {
+				return nil
+			}
+
 			if err := a.refreshArtists(); err != nil {
 				a.alert("Error: %v", err)
 				return nil

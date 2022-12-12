@@ -109,11 +109,6 @@ func Run(cfg *Config) {
 			return nil
 		}
 
-		switch event.Rune() {
-		case 'q':
-			a.tv.Stop()
-		}
-
 		return event
 	})
 
@@ -127,6 +122,7 @@ func (a *app) switchToPage(name string) {
 	switch name {
 	case "artists":
 		if a.sub == nil {
+			a.headerSections.Highlight("config")
 			return
 		}
 		if !a.artistsLoaded {
@@ -141,6 +137,7 @@ func (a *app) switchToPage(name string) {
 		a.pages.SetBorder(false)
 	case "playqueue":
 		if a.sub == nil {
+			a.headerSections.Highlight("config")
 			return
 		}
 		a.pages.SwitchToPage("playqueue")
@@ -149,6 +146,7 @@ func (a *app) switchToPage(name string) {
 		a.pages.SetBorder(true)
 	case "playlists":
 		if a.sub == nil {
+			a.headerSections.Highlight("config")
 			return
 		}
 		if !a.playlistsLoaded {

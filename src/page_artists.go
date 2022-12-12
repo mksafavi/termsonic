@@ -34,20 +34,20 @@ func (a *app) artistsPage() tview.Primitive {
 
 			a.loadAlbumInPanel(sel.id)
 			a.tv.SetFocus(a.songsList)
-			a.updateFooter()
 		})
 	a.artistsTree.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
+	a.artistsTree.SetFocusFunc(func() { a.updateFooter() })
 
 	// Songs list for the selected album
 	a.songsList = tview.NewList()
 	a.songsList.ShowSecondaryText(false).SetHighlightFullLine(true)
 	a.songsList.SetBorderAttributes(tcell.AttrDim).SetBorder(true)
+	a.songsList.SetFocusFunc(func() { a.updateFooter() })
 
 	// Change the left-right keys to switch between the panels
 	a.artistsTree.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.songsList)
-			a.updateFooter()
 			return nil
 		}
 		return event
@@ -56,7 +56,6 @@ func (a *app) artistsPage() tview.Primitive {
 	a.songsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.artistsTree)
-			a.updateFooter()
 			return nil
 		}
 		return event

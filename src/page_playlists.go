@@ -15,17 +15,18 @@ func (a *app) playlistsPage() tview.Primitive {
 		SetHighlightFullLine(true).
 		ShowSecondaryText(false)
 	a.playlistsList.SetBorder(true).SetBorderAttributes(tcell.AttrDim)
+	a.playlistsList.SetFocusFunc(func() { a.updateFooter() })
 
 	a.playlistSongs = tview.NewList().
 		SetHighlightFullLine(true).
 		ShowSecondaryText(false)
 	a.playlistSongs.SetBorder(true).SetBorderAttributes(tcell.AttrDim)
+	a.playlistSongs.SetFocusFunc(func() { a.updateFooter() })
 
 	// Change the left-right keys to switch between the panels
 	a.playlistsList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.playlistSongs)
-			a.updateFooter()
 			return nil
 		}
 		return event
@@ -33,7 +34,6 @@ func (a *app) playlistsPage() tview.Primitive {
 	a.playlistSongs.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyLeft || event.Key() == tcell.KeyRight {
 			a.tv.SetFocus(a.playlistsList)
-			a.updateFooter()
 			return nil
 		}
 		return event
@@ -62,7 +62,6 @@ func (a *app) refreshPlaylists() error {
 		a.playlistsList.AddItem(pl.Name, "", 0, func() {
 			a.loadPlaylist(id)
 			a.tv.SetFocus(a.playlistSongs)
-			a.updateFooter()
 		})
 	}
 

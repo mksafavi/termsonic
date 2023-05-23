@@ -32,3 +32,7 @@ The application reads its configuration from `$XDG_CONFIG_DIR/termsonic.toml`, o
 On Windows, it reads its configuration from `%APPDATA%\\Termsonic\\termsonic.toml`.
 
 You can edit the configuration from inside the app, or by hand using a text editor. See [the example configuration file](config.toml.example), and [the TOML reference](https://toml.io/en/). It is possible to specify another configuration file with the `-config` command-line argument.
+
+## Reporting bugs
+
+Please report any bug you find to [bugs+termsonic@sixfoisneuf.fr](mailto:bugs+termsonic@sixfoisneuf.fr). I'll gladly accept patches, as long as they follow the [git-send-email](https://git-send-email.io) format.

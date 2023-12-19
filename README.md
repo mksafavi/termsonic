@@ -17,7 +17,7 @@ This application requires [Go](https://go.dev) version 1.19 at minimum.
 
 ```
 $ git clone https://git.sixfoisneuf.fr/termsonic && cd termsonic
-$ go build -o termsonic ./cmd
+$ go build ./cmd/termsonic/
 ```
 
 ### Linux notes

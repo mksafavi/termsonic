@@ -89,6 +89,7 @@ func (a *app) loadPlaylist(id string) error {
 
 			if err := a.playQueue.Play(); err != nil {
 				a.alert("Error: %v", err)
+				LogErrorf("starting playback of playlist '%s': %v", a.currentPlaylist.Name, err)
 			}
 		})
 	}

@@ -44,6 +44,10 @@ func (q *Queue) Append(s *subsonic.Child) {
 }
 
 func (q *Queue) Insert(i int, s *subsonic.Child) {
+	if len(q.songs) == 0 {
+		q.Append(s)
+		return
+	}
 	q.songs = append(q.songs[:i], append([]*subsonic.Child{s}, q.songs[i:]...)...)
 }
 

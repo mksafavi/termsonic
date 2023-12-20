@@ -31,7 +31,9 @@ func (a *app) artistsPage() tview.Primitive {
 				if node.GetChildren() != nil || len(node.GetChildren()) == 0 {
 					artist, err := a.sub.GetMusicDirectory(sel.id)
 					if err != nil {
-						panic(err)
+						LogErrorf("loading album '%s': %v", sel.id, err)
+						a.alert("Error: %v", err)
+						return
 					}
 
 					for _, album := range artist.Child {

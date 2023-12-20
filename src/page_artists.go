@@ -127,6 +127,7 @@ func (a *app) loadAlbumInPanel(id string) error {
 			err := a.playQueue.Play()
 			if err != nil {
 				a.alert("Error: %v", err)
+				LogErrorf("starting playback of album '%s': %v", album.Name, err)
 			}
 		})
 	}

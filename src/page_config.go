@@ -47,11 +47,13 @@ func (a *app) configPage() *tview.Form {
 
 			if err := a.refreshArtists(); err != nil {
 				a.alert("Error: %v", err)
+				LogErrorf("refreshing artists following Ctrl+R: %v", err)
 				return nil
 			}
 
 			if err := a.refreshPlaylists(); err != nil {
 				a.alert("Error: %v", err)
+				LogErrorf("refreshing playlists following Ctrl+R: %v", err)
 				return nil
 			}
 

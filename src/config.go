@@ -45,7 +45,7 @@ func LoadDefaultConfig() (*Config, error) {
 
 func getConfigFilePath() (string, error) {
 	path := ""
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "openbsd" {
 		configDir := os.Getenv("XDG_CONFIG_DIR")
 		if configDir == "" {
 			home := os.Getenv("HOME")

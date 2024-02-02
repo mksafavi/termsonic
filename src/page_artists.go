@@ -28,6 +28,25 @@ func (a *app) artistsPage() tview.Primitive {
 
 			sel := node.GetReference().(selection)
 			if sel.entryType == "artist" {
+				if node.GetChildren() != nil || len(node.GetChildren()) == 0 {
+					artist, err := a.sub.GetMusicDirectory(sel.id)
+					if err != nil {
+						LogErrorf("loading album '%s': %v", sel.id, err)
+						a.alert("Error: %v", err)
+						return
+					}
+
+					for _, album := range artist.Child {
+						subnode := tview.NewTreeNode(album.Title)
+						subnode.SetReference(selection{"album", album.ID})
+						subnode.SetColor(tcell.ColorBlue)
+						subnode.SetSelectable(true)
+
+						node.AddChild(subnode)
+					}
+
+				}
+
 				node.SetExpanded(!node.IsExpanded())
 				return
 			}
@@ -83,20 +102,6 @@ func (a *app) refreshArtists() error {
 			node.SetColor(tcell.ColorRed)
 			node.SetSelectable(true)
 			node.SetExpanded(false)
-
-			albums, err := a.sub.GetMusicDirectory(artist.ID)
-			if err != nil {
-				return err
-			}
-
-			for _, album := range albums.Child {
-				subnode := tview.NewTreeNode(album.Title)
-				subnode.SetReference(selection{"album", album.ID})
-				subnode.SetColor(tcell.ColorBlue)
-				subnode.SetSelectable(true)
-
-				node.AddChild(subnode)
-			}
 
 			a.artistsTree.GetRoot().AddChild(node)
 		}

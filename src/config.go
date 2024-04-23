@@ -70,6 +70,16 @@ func getConfigFilePath() (string, error) {
 		os.MkdirAll(path, os.ModeDir.Perm())
 
 		path = filepath.Join(path, "termsonic.toml")
+	} else if runtime.GOOS == "darwin" {
+		home := os.Getenv("HOME")
+		if home == "" {
+			return "", fmt.Errorf("could not get home directory")
+		}
+
+		path = filepath.Join(home, "Library", "Application Support", "Termsonic")
+		os.MkdirAll(path, os.ModeDir.Perm() | 0700)
+
+		path = filepath.Join(path, "termsonic.toml")
 	} else {
 		return "", fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
 	}

@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"strings"
 
@@ -26,7 +25,7 @@ func Stream2(s *subsonic.Client, id string, parameters map[string]string) (io.Re
 	contentType := response.Header.Get("Content-Type")
 	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
 		// An error was returned
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -56,7 +55,7 @@ func Download2(s *subsonic.Client, id string) (io.ReadCloser, error) {
 	contentType := response.Header.Get("Content-Type")
 	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
 		// An error was returned
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 		if err != nil {
 			return nil, err
 		}

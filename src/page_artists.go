@@ -122,7 +122,7 @@ func (a *app) loadAlbumInPanel(id string) error {
 	a.songsList.Clear()
 	a.currentSongs = album.Song
 	for _, song := range album.Song {
-		txt := fmt.Sprintf("%-2d - %s", song.Track, song.Title)
+		txt := fmt.Sprintf("[%02d:%02d:%02d] %d.%d - %s", (song.Duration / 3600), (song.Duration / 60), (song.Duration % 60), song.DiscNumber, song.Track, song.Title)
 
 		a.songsList.AddItem(txt, "", 0, func() {
 			sel := a.songsList.GetCurrentItem()

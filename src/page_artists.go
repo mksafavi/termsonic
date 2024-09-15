@@ -13,7 +13,7 @@ type selection struct {
 }
 
 func (a *app) artistsPage() tview.Primitive {
-	grid := tview.NewFlex().SetDirection(tview.FlexColumn)
+	flex := tview.NewFlex().SetDirection(tview.FlexColumn)
 
 	// Artist & album list
 	root := tview.NewTreeNode("Subsonic server").SetColor(tcell.ColorYellow)
@@ -81,12 +81,12 @@ func (a *app) artistsPage() tview.Primitive {
 		return event
 	})
 
-	a.setupKeybindings(grid.Box)
+	a.setupKeybindings(flex.Box)
 
-	grid.AddItem(a.artistsTree, 0, 1, true)
-	grid.AddItem(a.songsList, 0, 1, false)
+	flex.AddItem(a.artistsTree, 0, 1, true)
+	flex.AddItem(a.songsList, 0, 1, false)
 
-	return grid
+	return flex
 }
 
 func (a *app) refreshArtists() error {

@@ -117,7 +117,6 @@ func (a *app) loadAlbumInPanel(id string) error {
 	album, err := a.sub.GetAlbum(id)
 	if err != nil {
 		panic(err)
-		return err
 	}
 
 	a.songsList.Clear()

@@ -28,7 +28,7 @@ func (a *app) artistsPage() tview.Primitive {
 
 			sel := node.GetReference().(selection)
 			if sel.entryType == "artist" {
-				if node.GetChildren() != nil || len(node.GetChildren()) == 0 {
+				if node.GetChildren() == nil || len(node.GetChildren()) == 0 {
 					artist, err := a.sub.GetArtist(sel.id)
 					if err != nil {
 						LogErrorf("loading artist '%s': %v", sel.id, err)

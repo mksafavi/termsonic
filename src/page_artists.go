@@ -3,6 +3,7 @@ package src
 import (
 	"fmt"
 
+	"github.com/delucks/go-subsonic"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -12,8 +13,47 @@ type selection struct {
 	id        string
 }
 
+func (a *app) nowPlaying() {
+	a.nowPlayingFlex = tview.NewFlex().SetDirection(tview.FlexColumn)
+	songText := tview.NewTextView().SetTextAlign(tview.AlignLeft)
+	coverArt := tview.NewImage()
+
+	a.nowPlayingFlex.SetBorder(true)
+	a.nowPlayingFlex.SetTitleAlign(tview.AlignLeft)
+	a.nowPlayingFlex.SetTitle(fmt.Sprintf("paused"))
+
+	a.nowPlayingFlex.AddItem(coverArt, 0, 1, false)
+	a.nowPlayingFlex.AddItem(songText, 0, 3, false)
+
+	a.playQueue.SetOnChangeCallback(func(song *subsonic.Child, isPaused bool) {
+		if song != nil {
+			if isPaused {
+				a.nowPlayingFlex.SetTitle(fmt.Sprintf("Paused"))
+			} else {
+				a.nowPlayingFlex.SetTitle(fmt.Sprintf("Playing"))
+			}
+
+			songText.SetText(fmt.Sprintf("Title: %s\nAlbum: %s\nArtist: %s", song.Title, song.Album, song.Artist))
+			coverArtImage, err := a.sub.GetCoverArt(song.ID, nil)
+			if err == nil {
+				coverArt.SetImage(coverArtImage)
+				coverArt.SetColors(tview.TrueColor)
+				coverArt.SetDithering(tview.DitheringNone)
+			}
+		} else {
+			songText.SetText("")
+		}
+
+		a.updatePageQueue()
+
+		// Fix "Now Playing" not always updating
+		go a.tv.Draw()
+	})
+}
+
 func (a *app) artistsPage() tview.Primitive {
 	flex := tview.NewFlex().SetDirection(tview.FlexColumn)
+	left_flex := tview.NewFlex().SetDirection(tview.FlexRow)
 
 	// Artist & album list
 	root := tview.NewTreeNode("Subsonic server").SetColor(tcell.ColorYellow)
@@ -84,8 +124,9 @@ func (a *app) artistsPage() tview.Primitive {
 	a.setupKeybindings(flex.Box)
 
 	flex.AddItem(a.artistsTree, 0, 1, true)
-	flex.AddItem(a.songsList, 0, 1, false)
-
+	flex.AddItem(left_flex, 0, 1, false)
+	left_flex.AddItem(a.songsList, 0, 3, false)
+	left_flex.AddItem(a.nowPlayingFlex, 0, 1, false)
 	return flex
 }
 

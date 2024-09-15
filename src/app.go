@@ -21,6 +21,9 @@ type app struct {
 	footer           *tview.TextView
 	cfg              *Config
 
+	//
+	nowPlayingFlex *tview.Flex
+
 	// Artists page
 	artistsLoaded bool
 	artistsTree   *tview.TreeView
@@ -53,6 +56,7 @@ func Run(cfg *Config) {
 	a.footer = tview.NewTextView().
 		SetDynamicColors(true)
 
+	a.nowPlaying()
 	a.pages.SetBorder(true)
 	a.pages.AddPage("config", a.configPage(), true, false)
 	a.pages.AddPage("artists", a.artistsPage(), true, false)

@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/BurntSushi/toml v1.2.1
-	github.com/delucks/go-subsonic v0.0.0-20220915164742-2744002c4be5
+	github.com/delucks/go-subsonic v0.0.0-20240806025900-2a743ec36238
 	github.com/faiface/beep v1.1.0
 	github.com/gdamore/tcell/v2 v2.4.1-0.20210905002822-f057f0a857a1
 	github.com/jfbus/httprs v0.0.0-20190827093123-b0af8319bb15
@@ -33,3 +33,5 @@ require (
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
+
+replace github.com/delucks/go-subsonic v0.0.0-20240806025900-2a743ec36238 => github.com/simsor/go-subsonic v0.0.0-20240915150451-850e2c6376a5

@@ -17,6 +17,7 @@ func (a *app) artistsPage() tview.Primitive {
 
 	// Artist & album list
 	root := tview.NewTreeNode("Subsonic server").SetColor(tcell.ColorYellow)
+	root.SetSelectable(false)
 	a.artistsTree = tview.NewTreeView().
 		SetRoot(root).
 		SetCurrentNode(root).

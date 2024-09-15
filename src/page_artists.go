@@ -29,15 +29,15 @@ func (a *app) artistsPage() tview.Primitive {
 			sel := node.GetReference().(selection)
 			if sel.entryType == "artist" {
 				if node.GetChildren() != nil || len(node.GetChildren()) == 0 {
-					artist, err := a.sub.GetMusicDirectory(sel.id)
+					artist, err := a.sub.GetArtist(sel.id)
 					if err != nil {
-						LogErrorf("loading album '%s': %v", sel.id, err)
+						LogErrorf("loading artist '%s': %v", sel.id, err)
 						a.alert("Error: %v", err)
 						return
 					}
 
-					for _, album := range artist.Child {
-						subnode := tview.NewTreeNode(album.Title)
+					for _, album := range artist.Album {
+						subnode := tview.NewTreeNode(album.Name)
 						subnode.SetReference(selection{"album", album.ID})
 						subnode.SetColor(tcell.ColorBlue)
 						subnode.SetSelectable(true)
@@ -113,14 +113,15 @@ func (a *app) refreshArtists() error {
 }
 
 func (a *app) loadAlbumInPanel(id string) error {
-	album, err := a.sub.GetMusicDirectory(id)
+	album, err := a.sub.GetAlbum(id)
 	if err != nil {
+		panic(err)
 		return err
 	}
 
 	a.songsList.Clear()
-	a.currentSongs = album.Child
-	for _, song := range album.Child {
+	a.currentSongs = album.Song
+	for _, song := range album.Song {
 		txt := fmt.Sprintf("%-2d - %s", song.Track, song.Title)
 
 		a.songsList.AddItem(txt, "", 0, func() {

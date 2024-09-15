@@ -20,7 +20,7 @@ type Queue struct {
 	sub                *subsonic.Client
 	speakerInitialized bool
 	oldSampleRate      beep.SampleRate
-	onChange           func(newSong *subsonic.Child, isPaused bool)
+	onChange           []func(newSong *subsonic.Child, isPaused bool)
 }
 
 func NewQueue(client *subsonic.Client) *Queue {
@@ -123,8 +123,8 @@ func (q *Queue) Next() error {
 	q.songs = q.songs[1:]
 
 	if len(q.songs) == 0 {
-		if q.onChange != nil {
-			q.onChange(nil, false)
+		for _, f := range q.onChange {
+			f(nil, false)
 		}
 		return nil
 	}
@@ -140,7 +140,7 @@ func (q *Queue) Stop() {
 }
 
 func (q *Queue) SetOnChangeCallback(f func(newSong *subsonic.Child, isPlaying bool)) {
-	q.onChange = f
+	q.onChange = append(q.onChange, f)
 }
 
 func (q *Queue) TogglePause() {
@@ -214,9 +214,9 @@ func (q *Queue) Switch(a, b int) error {
 }
 
 func (q *Queue) triggerChange() {
-	if q.onChange != nil {
-		if len(q.songs) > 0 {
-			q.onChange(q.songs[0], q.isPaused)
+	if len(q.songs) > 0 {
+		for _, f := range q.onChange {
+			f(q.songs[0], q.isPaused)
 		}
 	}
 }
